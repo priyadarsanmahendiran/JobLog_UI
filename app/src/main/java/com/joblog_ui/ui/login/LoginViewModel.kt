@@ -2,18 +2,51 @@ package com.joblog_ui.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.joblog_ui.provider.TokenManager
 import com.joblog_ui.repository.impl.LoginRepository
+import com.joblog_ui.requestmodel.auth.AuthRequest
+import com.joblog_ui.responsemodel.ResponseWrapper
 import com.joblog_ui.ui.base.BaseViewModel
+import com.joblog_ui.ui.base.ScreenState
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class LoginViewModel: BaseViewModel<LoginEvent, LoginState>() {
+class LoginViewModel(
+    private val loginRepository: LoginRepository,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+): BaseViewModel<LoginEvent, LoginState>() {
 
     public override fun handleEvent(publishedEvent: LoginEvent) {
         when (publishedEvent){
             is LoginEvent.OnLogin -> {
                 // Handle login event
-                val email = publishedEvent.email
-                val password = publishedEvent.password
-                // loginRepository.login(email, password)
+                val authRequest = AuthRequest(
+                    email = publishedEvent.email,
+                    password = publishedEvent.password
+                )
+                loginUser(authRequest)
+            }
+        }
+    }
+
+    private fun loginUser(authRequest: AuthRequest) {
+        // Call the login repository to perform the login operation
+        _state.value = ScreenState.Loading
+        // Use the coroutine dispatcher to perform the network call
+        viewModelScope.launch(coroutineDispatcher) {
+            when (val response = loginRepository.loginUser(authRequest)) {
+                is ResponseWrapper.Success -> {
+                    response.data?.accessToken?.let {
+                        LoginState.LoginSuccess(it)
+                    }
+                }
+                is ResponseWrapper.Error -> {
+                    response.error?.let {
+                        postState(LoginState.LoginFailure(it))
+                    }
+                }
             }
         }
     }
@@ -24,7 +57,7 @@ class LoginViewModel: BaseViewModel<LoginEvent, LoginState>() {
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-                return LoginViewModel() as T
+                return LoginViewModel(loginRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

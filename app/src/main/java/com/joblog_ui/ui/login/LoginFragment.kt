@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.joblog_ui.R
 import com.joblog_ui.databinding.FragmentLoginBinding
+import com.joblog_ui.provider.TokenManager
 import com.joblog_ui.repository.impl.LoginRepository
 import com.joblog_ui.ui.base.BaseFragment
 import com.joblog_ui.ui.base.ScreenState
@@ -64,10 +65,12 @@ class LoginFragment: BaseFragment(R.layout.fragment_login) {
     private fun processLoginState(state: LoginState) {
         when (state) {
             is LoginState.LoginSuccess -> {
-                // Handle login success
+                context?.let {
+                    TokenManager.saveToken(it, state.token)
+                }
             }
             is LoginState.LoginFailure -> {
-                // Handle login error
+                showSnackbar("Login Failed!")
             }
         }
     }

@@ -22,5 +22,5 @@ abstract class BaseViewModel<in Event, State> : ViewModel() {
         _state.value = ScreenState.Render(state)
     }
 
-    protected abstract fun handleEvent(event: Event)
+    protected abstract fun handleEvent(publishedEvent: Event)
 }
