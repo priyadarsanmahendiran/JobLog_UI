@@ -34,7 +34,17 @@ object RetrofitClient {
 }
 
 object JobLogClient {
-    val joblogService: JoblogService by lazy {
-        RetrofitClient.getClient().create(JoblogService::class.java)
+
+    private lateinit var joblogService: JoblogService
+
+    fun init(context: Context) {
+        joblogService = RetrofitClient.getClient(context).create(JoblogService::class.java)
+    }
+
+    fun getService(): JoblogService {
+        if (!::joblogService.isInitialized) {
+            throw IllegalStateException("JobLogClient is not initialized. Call init(context) in Application class.")
+        }
+        return joblogService
     }
 }

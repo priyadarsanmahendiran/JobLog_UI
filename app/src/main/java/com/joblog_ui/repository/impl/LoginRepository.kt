@@ -12,7 +12,7 @@ class LoginRepository: BaseRepository(), ILoginRepository {
     override suspend fun loginUser(
         authRequest: AuthRequest
     ): ResponseWrapper<AuthResponse> = safeApiCall {
-        JobLogClient.joblogService.login(
+        JobLogClient.getService().login(
             authRequest = authRequest
         )
     }
@@ -20,7 +20,7 @@ class LoginRepository: BaseRepository(), ILoginRepository {
     override suspend fun registerUser(
         authRequest: AuthRequest
     ): ResponseWrapper<ResponseBody> = safeApiCall {
-        JobLogClient.joblogService.register(
+        JobLogClient.getService().register(
             authRequest = authRequest
         )
     }
