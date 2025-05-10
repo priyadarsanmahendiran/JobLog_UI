@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_login"
-        android:name="com.joblog_ui.ui.login.LoginFragment"
+        android:name="com.joblogui.ui.login.LoginFragment"
         android:label="@string/login"
         tools:layout="@layout/fragment_login" />
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.joblog_ui.ui.gallery.GalleryFragment"
+        android:name="com.joblogui.ui.gallery.GalleryFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.joblog_ui.ui.slideshow.SlideshowFragment"
+        android:name="com.joblogui.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
 </navigation>
